@@ -1,0 +1,677 @@
+openapi: 3.0.0
+info:
+  title: Quiz Master API
+  description: Advanced Quiz Application API with Celery background jobs, analytics, and comprehensive quiz management
+  version: 2.0.0
+  contact:
+    name: Quiz Master API Support
+    email: support@quizmaster.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:5000
+    description: Development server
+
+paths:
+  /api:
+    get:
+      summary: Get API information
+      description: Returns basic API information and available endpoints
+      responses:
+        '200':
+          description: API information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  version:
+                    type: string
+                  description:
+                    type: string
+                  endpoints:
+                    type: object
+
+  /api/health:
+    get:
+      summary: Health check endpoint
+      description: Check the health status of the API and its dependencies
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, unhealthy]
+                  timestamp:
+                    type: string
+                    format: date-time
+                  database:
+                    type: string
+                  redis:
+                    type: string
+                  stats:
+                    type: object
+
+  /api/users:
+    get:
+      summary: Get all users with pagination
+      description: Retrieve a paginated list of all users
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          description: Number of users per page
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of users with pagination info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /api/users/{user_id}:
+    get:
+      summary: Get user by ID
+      description: Retrieve detailed information about a specific user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User details with statistics
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    properties:
+                      statistics:
+                        type: object
+                        properties:
+                          total_attempts:
+                            type: integer
+                          average_score:
+                            type: number
+
+  /api/subjects:
+    get:
+      summary: Get all subjects
+      description: Retrieve all subjects with chapter counts
+      responses:
+        '200':
+          description: List of subjects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subject'
+
+  /api/subjects/{subject_id}/chapters:
+    get:
+      summary: Get chapters for a subject
+      description: Retrieve all chapters belonging to a specific subject
+      parameters:
+        - name: subject_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Subject with its chapters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subject:
+                    $ref: '#/components/schemas/Subject'
+                  chapters:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Chapter'
+
+  /api/chapters:
+    get:
+      summary: Get all chapters
+      description: Retrieve all chapters with subject information
+      responses:
+        '200':
+          description: List of chapters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Chapter'
+
+  /api/chapters/{chapter_id}/quizzes:
+    get:
+      summary: Get quizzes for a chapter
+      description: Retrieve all quizzes belonging to a specific chapter
+      parameters:
+        - name: chapter_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Chapter with its quizzes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chapter:
+                    $ref: '#/components/schemas/Chapter'
+                  quizzes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Quiz'
+
+  /api/quizzes:
+    get:
+      summary: Get all quizzes with pagination
+      description: Retrieve a paginated list of all quizzes
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of quizzes with pagination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  quizzes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Quiz'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /api/quizzes/{quiz_id}:
+    get:
+      summary: Get quiz by ID
+      description: Retrieve detailed information about a specific quiz
+      parameters:
+        - name: quiz_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Quiz details with statistics
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Quiz'
+                  - type: object
+                    properties:
+                      statistics:
+                        type: object
+                        properties:
+                          total_attempts:
+                            type: integer
+                          average_score:
+                            type: number
+
+  /api/quizzes/{quiz_id}/questions:
+    get:
+      summary: Get questions for a quiz
+      description: Retrieve all questions for a specific quiz (without correct answers)
+      parameters:
+        - name: quiz_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Quiz with its questions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  quiz:
+                    $ref: '#/components/schemas/Quiz'
+                  questions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Question'
+
+  /api/questions:
+    get:
+      summary: Get questions
+      description: Retrieve questions, optionally filtered by quiz
+      parameters:
+        - name: quiz_id
+          in: query
+          description: Filter by quiz ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of questions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+
+  /api/scores:
+    get:
+      summary: Get quiz scores
+      description: Retrieve quiz scores with optional filtering
+      parameters:
+        - name: user_id
+          in: query
+          description: Filter by user ID
+          schema:
+            type: integer
+        - name: quiz_id
+          in: query
+          description: Filter by quiz ID
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Maximum number of results
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: List of scores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Score'
+
+  /api/user/{user_id}/quizzes:
+    get:
+      summary: Get quizzes taken by a user
+      description: Retrieve all quizzes attempted by a specific user with attempt statistics
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User's quiz attempts with statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  quizzes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        quiz_id:
+                          type: integer
+                        quiz_name:
+                          type: string
+                        attempts:
+                          type: integer
+                        best_score:
+                          type: integer
+
+  /api/analytics/overview:
+    get:
+      summary: Get analytics overview
+      description: Retrieve system-wide analytics and statistics
+      responses:
+        '200':
+          description: Analytics overview
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  overview:
+                    type: object
+                    properties:
+                      total_users:
+                        type: integer
+                      total_quizzes:
+                        type: integer
+                      total_attempts:
+                        type: integer
+                      total_questions:
+                        type: integer
+                  popular_quizzes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        attempts:
+                          type: integer
+                        avg_score:
+                          type: number
+                  active_users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        attempts:
+                          type: integer
+                        avg_score:
+                          type: number
+
+  /api/analytics/performance:
+    get:
+      summary: Get performance analytics
+      description: Retrieve detailed performance analytics and trends
+      responses:
+        '200':
+          description: Performance analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  overall_performance:
+                    type: object
+                    properties:
+                      total_attempts:
+                        type: integer
+                      average_score:
+                        type: number
+                      percentiles:
+                        type: object
+                        properties:
+                          p25:
+                            type: number
+                          p50:
+                            type: number
+                          p75:
+                            type: number
+                          p90:
+                            type: number
+                  recent_trend:
+                    type: object
+                    properties:
+                      last_30_days_attempts:
+                        type: integer
+                      recent_avg_score:
+                        type: number
+
+  /api/search:
+    get:
+      summary: Search across entities
+      description: Search for users, quizzes, subjects, etc.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Search query
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: Search type filter
+          schema:
+            type: string
+            enum: [all, users, quizzes, subjects]
+            default: all
+        - name: limit
+          in: query
+          description: Maximum results per type
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    type: string
+                  search_type:
+                    type: string
+                  results:
+                    type: object
+                  total_results:
+                    type: integer
+
+  /api/tasks/status/{task_id}:
+    get:
+      summary: Get background task status
+      description: Check the status of a Celery background task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_id:
+                    type: string
+                  status:
+                    type: string
+                    enum: [PENDING, STARTED, SUCCESS, FAILURE, RETRY, REVOKED]
+                  result:
+                    type: object
+                  error:
+                    type: string
+        '503':
+          description: Celery not available
+
+  /api/export/users:
+    get:
+      summary: Export users data
+      description: Export users data in JSON or CSV format
+      parameters:
+        - name: format
+          in: query
+          description: Export format
+          schema:
+            type: string
+            enum: [json, csv]
+            default: json
+      responses:
+        '200':
+          description: Exported data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  export_type:
+                    type: string
+                  format:
+                    type: string
+                  timestamp:
+                    type: string
+                  data:
+                    type: array
+            text/csv:
+              schema:
+                type: string
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+
+    Subject:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        chapter_count:
+          type: integer
+
+    Chapter:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        subject_id:
+          type: integer
+        subject_name:
+          type: string
+        quiz_count:
+          type: integer
+
+    Quiz:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        date_of_quiz:
+          type: string
+          format: date-time
+        time_duration:
+          type: string
+        chapter_id:
+          type: integer
+        chapter_name:
+          type: string
+        question_count:
+          type: integer
+
+    Question:
+      type: object
+      properties:
+        id:
+          type: integer
+        question:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+          minItems: 4
+          maxItems: 4
+        quiz_id:
+          type: integer
+        quiz_name:
+          type: string
+
+    Score:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        username:
+          type: string
+        quiz_id:
+          type: integer
+        quiz_name:
+          type: string
+        total_scored:
+          type: integer
+        correct_answers:
+          type: integer
+        wrong_answers:
+          type: integer
+        attempted_questions:
+          type: integer
+        time_taken:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
+        pages:
+          type: integer

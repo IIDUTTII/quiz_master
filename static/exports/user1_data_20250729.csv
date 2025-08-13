@@ -1,0 +1,32 @@
+quiz_id,quiz_name,chapter_id,chapter_name,subject_name,date_of_quiz,time_of_quiz,score,total_questions,correct_answers,wrong_answers,percentage_score,time_taken_minutes,remarks,attempt_number
+502,Geometry Challenge,402,Geometry,Mathematics,2025-07-28,19:22:52,0/5,5,0,5,0.00%,17.78,needs improvement,1
+516,Hadappa,409,Ancient History,History,2025-07-28,19:18:00,0/1,1,0,1,0.00%,-0.01,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-07-28,18:35:42,0/1,1,0,1,0.00%,-0.01,needs improvement,1
+510,Eng Police 2,447,eng thulla grammer 1,english,2025-07-28,17:18:45,0/0,0,0,0,0.00%,0.78,needs improvement,1
+504,Organic Chemistry,405,Organic Chemistry,Chemistry,2025-07-27,16:57:40,0/6,6,0,6,0.00%,0.13,needs improvement,1
+504,Organic Chemistry,405,Organic Chemistry,Chemistry,2025-07-26,11:28:58,0/6,6,0,6,0.00%,0.55,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-07-26,07:36:36,0/5,5,0,5,0.00%,-0.0,needs improvement,1
+511,Commando 1,447,eng thulla grammer 1,english,2025-06-26,09:15:55,3/10,10,3,7,30.00%,0.6,needs improvement,1
+517,new alzz quizz,401,Algebra,Mathematics,2025-03-28,19:50:46,0/0,0,0,0,0.00%,0,needs improvement,1
+517,new alzz quizz,401,Algebra,Mathematics,2025-03-28,19:43:46,0/0,0,0,0,0.00%,0,needs improvement,1
+517,new alzz quizz,401,Algebra,Mathematics,2025-03-28,19:03:28,0/0,0,0,0,0.00%,32.9,needs improvement,1
+504,Organic Chemistry,405,Organic Chemistry,Chemistry,2025-03-28,10:06:13,4/7,7,4,3,57.14%,0.63,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-27,15:26:05,3/4,4,3,1,75.00%,0.27,good performance,1
+512,HP gk FOR cOMMANDOO,448,hp gk modern,G.K hP,2025-03-26,14:04:26,8/10,10,8,2,80.00%,2.3,good performance,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,11:21:28,0/4,4,0,4,0.00%,0,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,11:14:50,1/3,3,1,2,33.33%,0,needs improvement,1
+504,Organic Chemistry,405,Organic Chemistry,Chemistry,2025-03-25,08:10:01,1/2,2,1,1,50.00%,11.73,needs improvement,1
+504,Organic Chemistry,405,Organic Chemistry,Chemistry,2025-03-25,08:07:32,4/7,7,4,3,57.14%,0.73,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,07:01:04,2/3,3,2,1,66.67%,0.12,average performance,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,06:39:07,2/4,4,2,2,50.00%,0.08,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,06:34:37,1/4,4,1,3,25.00%,0.1,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,06:07:35,1/4,4,1,3,25.00%,0.1,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,02:02:28,0/4,4,0,4,0.00%,17.1,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,01:50:38,1/4,4,1,3,25.00%,0.35,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,01:35:37,0/1,1,0,1,0.00%,0,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,01:34:27,0/4,4,0,4,0.00%,0.5,needs improvement,1
+502,Geometry Challenge,402,Geometry,Mathematics,2025-03-25,01:21:21,0/1,1,0,1,0.00%,0.05,needs improvement,1
+510,Eng Police 2,447,eng thulla grammer 1,english,2025-03-24,18:24:41,7/12,12,7,5,58.33%,5.15,needs improvement,1
+509,Police quiz 1,447,eng thulla grammer 1,english,2025-03-24,18:12:44,9/10,10,9,1,90.00%,5.38,excellent performance,1
+504,Organic Chemistry,405,Organic Chemistry,Chemistry,2025-03-24,17:19:37,4/7,7,4,3,57.14%,4.17,needs improvement,1
+504,Organic Chemistry,405,Organic Chemistry,Chemistry,2025-03-24,17:19:37,4/7,7,4,3,57.14%,13.05,needs improvement,1
